@@ -10,7 +10,7 @@ We don't just automate — we elevate. From prototypes to production, from promp
 ### *We build smart AI that gets the bag — and helps you secure yours.*
 ![logo_for_a_nextgen_0](https://github.com/user-attachments/assets/cacaffe5-e3de-41e8-8dbf-be56ee390ee5)
 
-
+### *Custom RAGs and LLMs, engineered to turn data into ROI.*
 ![logo_for_a_nextgen_3](https://github.com/user-attachments/assets/ab78b415-16aa-4369-b2e7-16c19f63282a)
 
 ### *We Train LLMs Like They’re Chasing Checks.*
