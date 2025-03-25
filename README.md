@@ -1,3 +1,3 @@
-# LLM and RAG Workflow Research
-## ...and some GitHub practice
-### JT
+# LLM and RAG Workflow Research 
+## **...and some GitHub practice**
+### **JT**
