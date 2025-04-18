@@ -1,0 +1,78 @@
+HUGGIN FACE EVALUATE LIBRARY
+metric - eval model performance based on ground truth and model's prediction
+
+Comparison: Used to compare two models. Comparing their predictions to ground truth labels and computing their agreement
+measurement: insight on dataset properties
+
+
+metric = description and feautrues attribute  - predictions and references
+
+
+
+
+USE KPIS for meaningful evaluation 
+
+Considerations for model evaluation
+
+1. Properly splitting your data
+	- Train - 80%
+	- Validation 10%
+	- Test 10%
+
+
+2. Importance of class imbalance 
+	- metrics like recall and precision, and f1-score can be used together
+	- make sure all label classes or represented equally
+		- If yes: using accuracy can reflect overall model performance
+		- If no: using an f1-score can better represent performance for an imbalanced dataset
+
+3. Offline vs online model evaluation
+
+	- Offline: Done before deploying a model or using insights generated from a model using static datasets and metrics.
+		- can compare a model to other models based on their performance on common benchmarks
+	
+	- Online: evaluating performance after deploying and during use in production
+		-  can evaluate aspects such as latency and accuracy of the model based on production data (number of user queries 
+		   it was actually able to address)
+
+4. Trade-offs in model evaluation
+
+	- speed vs accuracy
+	- Interpretability - using an "exact match" metric is easier to understand than a Bleu score
+	- Inference speed vs memory footprint
+
+		- Inference speed: Time it takes a model to make a prediction
+		- memory footprint: size of the model weights and how much hardware memory they occupy.
+
+5. Limitations and Bias
+	
+	- All models and metrics have limits and bias, which depend on how they were trained, the data that was used and intended uses
+
+	- measuring bias can be done by evaluating models on datasets such as 
+		- https://huggingface.co/datasets/wino_bias
+		- https://huggingface.co/datasets/md_gender_bias
+		- https://huggingface.co/spaces/nazneen/error-analysis
+
+	  and by doing interactive error analysis to identify which subsets of the eval dataset the model performs poorly one
+
+
+
+build a simple program evaluation class based on which type of task the model is intended to be used on 
+
+METRICS FOR TEXT CLASSIFICATION
+Accuracy
+precision
+recall 
+F1- Score
+
+Metrics FOR Language Tasks
+Perplexity: A model's ability to predict the next word accurately and confidently
+	Lower the score = higher confidence
+
+Bleu: Measures translation quality against human references
+	Predictions: LLMs output
+	Reference: Human reference 
+	score : 0 - 1 with 1 highest similarity
+	
+
+Bleu score 

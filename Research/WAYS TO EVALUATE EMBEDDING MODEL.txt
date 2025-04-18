@@ -1,0 +1,58 @@
+WAYS TO EVALUATE EMBEDDING MODEL
+Vector embeddings are crucial for enhancing the performance of semantic search and Retrieval-Augmented Generation (RAG) applications. When selecting the best embedding model for semantic search, particularly from providers like Hugging Face, it is essential to consider several factors that align with your specific use case.
+
+Step 1: Identify Your Use Case
+Understanding your requirements is the first step in choosing the right embedding model. Here are some key considerations:
+
+Modality: Determine if you need a model that handles text only or if a multimodal approach is necessary.
+Subject Domain: Consider the specific domain of your application, such as legal, medical, or technical fields.
+Deployment Mode: Assess whether you need a model that can be deployed on-premises or if a cloud-based solution is more suitable.
+Starting with a general-purpose model can often provide a solid foundation. For instance, models like SBERT and USE are popular choices for many applications due to their versatility and performance.
+
+
+Step 2: Evaluate Model Performance
+Performance metrics are critical in assessing the effectiveness of different embedding models. The following table summarizes the performance of various models in document and paragraph discovery tasks:
+
+Model		Document R-Precision	Document Recall@1	Document Recall@3	Document Recall@5	Paragraph R-Precision	Paragraph Recall@1	Paragraph Recall@3	Paragraph Recall@5
+BM25		21.43	 		15.87			26.19			28.57			45.50			29.89			58.99			71.43
+Ada-002		48.41			45.24			57.94			58.73			39.15			33.07			51.85			65.34
+BGE-base	52.38			47.62			68.25			71.43			57.41			42.59			78.04			84.13
+BGE-large	61.90			54.76			70.63			78.57			55.03			44.18			77.25			86.51	
+
+
+Step 3: Consider Integration and Compatibility
+When selecting an embedding model, ensure it integrates well with your existing systems. Weaviate, for example, supports various model providers, allowing for seamless integration of the chosen embedding model into your application.
+
+
+Performance Metrics
+The effectiveness of these models can be evaluated using various metrics, including:
+
+Exact Matching: Determines if the retrieved code matches the original exactly.
+Category Matching: Assesses if the retrieved code belongs to the same category as the original, defined by the first three characters of the code.
+Character Error Rate (CER): Measures the discrepancies between the retrieved and original codes.
+These metrics provide insights into the performance of embedding models, particularly in capturing semantic relationships, which is crucial for tasks like semantic search. For instance, models like BERT and its variants have shown significant promise in this area, making them some of the best embedding models for semantic search on Hugging Face.
+
+Data Preparation
+Before deploying the model, ensure that your data is pre-processed correctly. This includes:
+
+Cleaning the Data: Remove any irrelevant information or noise from your dataset.
+Tokenization: Use the tokenizer associated with your chosen Hugging Face model to convert text into tokens.
+Embedding Generation: Generate embeddings for your dataset using the selected model. This can be done using the following code snippet:
+
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer('multi-qa-MiniLM-L6-cos-v1')
+embeddings = model.encode(your_text_data)
+
+
+Performance Considerations
+When deploying Hugging Face models for semantic search, consider the following:
+
+Scalability: Ensure that your infrastructure can handle the load, especially if you are working with large datasets. You may want to consider using a Kubernetes cluster for production environments.
+Latency: Monitor the response times of your queries to ensure that they meet user expectations. Optimize your model and database configurations as necessary.
+
+Task:
+build a model takes an input video and transcribe
+mistral llm
+whisper for transcription
+x model for translation
+pyannote for diarization

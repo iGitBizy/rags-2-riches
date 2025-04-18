@@ -1,0 +1,282 @@
+!pip install tensorflow
+!pip install pytorch
+!pip install FLAX
+!pip install transformers
+
+from transformers import pipeline
+
+# Load the model pipeline
+summarizer = pipeline(task='summarization', model="cnicu/t5-small-booksum")
+
+# Pass the long text to the model
+output = summarizer(long_text, max_length=50, clean_up_tokenization_spaces=True)
+
+# Access and print the summarized text
+print(output)
+
+#Using pretrained llms 
+# language understanding
+summarization
+classification
+sentiment analysis
+generation
+q&a
+
+#pad_token_id = generator.tokenization.eos_token_id
+
+#Generating Text
+generator = pipeline(task='text-generation', model="distilgpt2")
+
+prompt = "The Gion neighborhood in Kyoto is famous for"
+
+output = generator(prompt, max_lenght=150, pad_token_id = generator.tokenization.eos_token_id)
+
+print(output[0]["generated_text"]
+
+# Instantiate the pipeline
+generator = pipeline(task="text-generation", model="gpt2")
+
+text = "I had a wonderful stay at the Riverview Hotel! The staff were incredibly attentive and the amenities were top-notch. 
+The only hiccup was a slight delay in room service, but that didn't overshadow the fantastic experience I had."
+
+response = "Dear valued customer, I am glad to hear you had a good stay with us."
+
+# Complete the prompt
+prompt = f"Customer review:\n{text}\n\nHotel reponse to the customer:\n{response}"
+
+# Complete the model pipeline
+outputs = generator(prompt, max_length=150, pad_token_id=generator.tokenizer.eos_token_id, truncation=True)
+
+print(outputs[0]["generated_text"])
+
+# Translating Text
+
+spanish_text = "Este curso sobre LLMs se está poniendo muy interesante"
+
+# Define the pipeline
+translator = pipeline(task="translation_es_to_en", model="Helsinki-NLP/opus-mt-es-en")
+
+# Translate the Spanish text
+translations = translator(spanish_text, clean_up_tokenization_spaces=True)
+
+print(translations[0]["translation_text"])
+
+
+#Understanding Transformers
+# Deep Learning architectuere optimizing storage of token embeds
+
+Types 
+	Encoder only:
+		- understand input text
+		- no sequential output
+		- common tasks:
+			- Text classification
+			- Sentiment Analysis
+			- Extractive Question answering (where output is extract of text or label) (Bert 
+
+	#checkout model architecture
+	llm = pipeline(modeld="bert-base-uncase")
+	print(llm.model)
+	print(llm.model.config)
+	print(llm.model.config.is_decoder)
+	print(llm.model.config.is_encoder_decoder)
+
+	Decoder only:
+		- only focus on output
+		- common task:
+			- Text Generation
+			- Generative Q&A (sentences or paragraphs) (chaptgpt)
+
+
+
+
+	Encoder-decoder:
+		- Understand and process the input and output
+		- common task:
+			- Translation
+			- Summarization (T5, BART models)
+
+# Using correct Model structure
+question = "Who painted the Mona Lisa?"
+
+# Define the appropriate model
+qa = pipeline(task="question-answering", model="distilbert-base-uncased-distilled-squad")
+
+output = qa(question=question, context=text)
+print(output['answer'])
+
+
+#Second example
+question = "Who painted the Mona Lisa?"
+
+# Define the appropriate model
+qa = pipeline(task="question-answering", model="gpt2")
+
+#Define Context 
+text = "\nThe Mona Lisa is a half-length portrait painting by Italian artist Leonardo da Vinci. Considered an archetypal masterpiece of the Italian Renaissance, it has been described as the most known, visited, talked about, and sung about work of art in the world. The painting's novel qualities include the subject's enigmatic expression, the monumentality of the composition, and the subtle modeling of forms.\n"
+
+input_text = f"Context: {text}\n\nQuestion: {question}\n\nAnswer:"
+
+output = qa({"context": text, "question": question}, max_length=150)
+print(output['answer'])
+
+
+# Fine Tuning LLMs
+Pipeline = streamlines 
+autotclasses - more custom , fine tuning
+from transforms impor AutoModel, AutoTokenizer, 
+
+llm dev cycle
+Pretrain > Pretrained FM > Fine tuning > Tine tuned model 
+
+FINE TUNE MODEL 
+LEVERAGE A PRETRAINED MODEL FROM HUGGING FACE AND FINE TUNE IT SPECIFIC DATA
+
+
+# loading a dataset for fine-tuning
+from datasets import load_dataset
+
+# load_dataset() loads a dataset from hugging face hub
+# use .shard() to split dataset into chunks and selecting
+# first chunk as index 0, we do this speed up training
+
+train_data = load_dataset("imdb", split="train")
+train_data = data.shard(num_shards=4, index=0)p
+test_data = load_dataset("imdb", split="test")
+test_data = data.shard(num_shards=4, index=0)
+
+
+# Loading Auto Classes
+from transformers import AutoModel, Autotokenizer,
+from transformers import AutoModelForSequenceClassification #task specific automodel
+
+# Loads a specified pretrained model with elarned weights 
+model = AutoModelForSequenceClassification.from_pretrained("bert-based-uncased")
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+# Tokenize Data, enabling padding, truncation, max_length for efficiency
+# set the return_tensors to pt to return PyTorch tensors since the model expects this format
+tokenized_training_data = tokenizer(train_data["text", return_tensors="pt", padding=True,
+truncation=True, max_length=64)
+
+tokenized_test_data = tokenizer(test_data["text"], return_tensors="pt", padding=True, 
+truncation=True, max_length=)
+
+print(tokenized_training_data)
+
+
+Tokenizing Row by Row
+def tokenzize_function(text_data):
+    return tokenizer(text_data["text"], return_tensors="pt", padding=True, truncation=True,
+			max_length=64)
+# Tokenize in batches
+tokenized_in_batches = train_data.map(tokenize_function, batched=True)
+
+# Tokenize row by row
+tokenized_by_row = train_data.map(tokenize_function, batched=False)
+
+MAPPING TOKENIZATION
+def tokenize_function(data):
+    return tokenizer(data["interaction"], 
+                     return_tensors='pt', 
+                     padding=True, 
+                     truncation=True, 
+                     max_length=64)
+
+# Tokenize row by row
+tokenized_by_row = train_data.map(tokenize_function, batched=False)
+print(tokenized_by_row)
+
+tokenized_in_batches = train_data.map(tokenize_function, batched=True)
+
+
+TOKENIZING TEXT
+# Load the model and tokenizer
+model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased")
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+
+# Tokenize the data
+tokenized_training_data = tokenizer(train_data["interaction"], return_tensors="pt", padding=True, truncation=True, max_length=20)
+
+tokenized_test_data = tokenizer(test_data["interaction"], return_tensors="pt", padding=True, truncation=True, max_length=20)
+
+print(tokenized_training_data)
+
+
+Fine-Tuning Through TRAINING 
+# Set up an instance of TrainingArguments
+training_args = TrainingArguments(
+  output_dir="./finetuned",
+
+  # Set the evaluation strategy
+  evaluation_strategy="epoch",
+
+  # Specify the number of epochs
+  num_train_epochs=3,
+  learning_rate=2e-5,
+
+  # Set the batch sizes
+  per_device_train_batch_size=3,
+  per_device_eval_batch_size=3,
+  weight_decay=0.01,
+)
+
+WITH TRAINING ARGUMENTS IN PLACE USE TRAINER CLASS TO TRAIN MODEL
+# Set up the trainer object
+trainer = Trainer(
+    model=model,
+    # Assign the training arguments and tokenizer
+    args=training_args,
+    train_dataset=tokenized_training_data,
+    eval_dataset=tokenized_test_data,
+    tokenizer=tokenizer
+)
+
+WITH TRAINING ARGUMENTS IN PLACE USE TRAINER CLASS TO TRAIN MODEL
+# Train the model
+trainer.train()
+
+USING FINE-TUNED MODEL
+input_text = ["I'd just like to say, I love the product! Thank you!"]
+
+# Tokenize the new data
+inputs = tokenizer(input_text, return_tensors="pt", padding=True, truncation=True)
+
+# Pass the tokenized inputs through the model
+with torch.no_grad():
+    outputs = model(**inputs)
+
+# Extract the new predictions
+predicted_labels = torch.argmax(outputs.logits, dim=1).tolist()
+
+label_map = {0: "Low risk", 1: "High risk"}
+for i, predicted_label in enumerate(predicted_labels):
+    churn_label = label_map[predicted_label]
+    print(f"\n Input Text {i + 1}: {input_text[i]}")
+    print(f"Predicted Label: {predicted_label}")
+
+
+Transfer learning with OneShot 
+Model trained using only one example
+
+# Include an example in the input ext
+input_text = """
+Text: "The dinner we had was great and the service too."
+Classify the sentiment of this sentence as either positive or negative.
+Example:
+Text: "The food was delicious"
+Sentiment: Positive
+Text: "The dinner we had was great and the service too."
+Sentiment:
+"""
+
+# Apply the example to the model
+result = model(input_text, max_length=100)
+
+print(result[0]["label"])
+
+
+
+#MODEL EVALUATION
+
+
