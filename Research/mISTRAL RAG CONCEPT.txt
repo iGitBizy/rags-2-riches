@@ -1,0 +1,101 @@
+mISTRAL RAG CONCEPT
+
+from sentence_transformers import SentenceTransformer
+import chromadb
+from chromadb.config import Settings
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+# -----------------------------
+# 1. Setup Embeddings and ChromaDB
+# -----------------------------
+
+embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+
+chroma_client = chromadb.Client(Settings(anonymized_telemetry=False))
+collection = chroma_client.create_collection(name="knowledge_base")
+
+# Insert documents
+documents = [
+    "The Mona Lisa was painted by Leonardo da Vinci during the Renaissance period in Italy.",
+    "Photosynthesis is the process by which green plants convert sunlight into energy.",
+    "The Great Wall of China was built to protect against northern invaders."
+]
+doc_ids = ["doc1", "doc2", "doc3"]
+doc_embeddings = embedding_model.encode(documents).tolist()
+
+collection.add(documents=documents, embeddings=doc_embeddings, ids=doc_ids)
+
+# -----------------------------
+# 2. Load Mistral 7B Instruct - with Chat Template support
+# -----------------------------
+
+model_name = "mistralai/Mistral-7B-Instruct-v0.2"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    device_map="auto",
+    torch_dtype=torch.float16,
+    trust_remote_code=True
+)
+
+# -----------------------------
+# 3. Ask a Question
+# -----------------------------
+
+user_question = "Who created the Mona Lisa?"
+
+# Retrieve context
+question_embedding = embedding_model.encode(user_question).tolist()
+
+results = collection.query(query_embeddings=[question_embedding], n_results=2)
+retrieved_contexts = " ".join(results['documents'][0])
+
+# -----------------------------
+# 4. Build Chat Template Messages
+# -----------------------------
+
+messages = [
+    {
+        "role": "system",
+        "content": "You are a helpful assistant. Answer questions truthfully using the provided context only."
+    },
+    {
+        "role": "user",
+        "content": f"Context:\n{retrieved_contexts}\n\nQuestion: {user_question}\n\nAnswer:"
+    }
+]
+
+# -----------------------------
+# 5. Apply Chat Template
+# -----------------------------
+
+# Huggingface's tokenizer knows how to apply the chat template
+inputs = tokenizer.apply_chat_template(
+    messages,
+    tokenize=True,
+    return_tensors="pt"
+).to(model.device)
+
+# -----------------------------
+# 6. Generate output manually
+# -----------------------------
+
+with torch.no_grad():
+    generated_ids = model.generate(
+        inputs,
+        max_new_tokens=300,
+        temperature=0.3,
+        do_sample=True,
+        top_p=0.95
+    )
+
+# -----------------------------
+# 7. Decode output manually
+# -----------------------------
+
+output = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
+
+print("\n--- Final Answer ---\n")
+print(output)
